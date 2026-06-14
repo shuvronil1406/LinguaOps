@@ -151,7 +151,7 @@
 
       <section class="slide">
         <h2>The Unsolved Problem: Traditional RAG is Too Slow for Real-Time Voice</h2>
-        <p>Standard pipelines add 200ms+ vector lookups. Delays beyond 600ms reduce lead conversion; delays above 800ms can drive a 20–30% drop in support deflection.</p>
+        <p>Standard pipelines add 200ms+ vector lookups. Delays beyond 600ms reduce lead conversion; delays above 800ms can drive an estimated 20–30% drop in support deflection (internal benchmark estimate).</p>
         <div class="card">
           <svg viewBox="0 0 850 350" width="100%" role="img" aria-label="Bar chart comparing standard RAG latency and target latency budget">
             <line x1="80" y1="30" x2="80" y2="290" stroke="#92b8eb"/>
@@ -256,7 +256,7 @@
 
       <section class="slide">
         <h2>Achieving &lt;1.5 Second Turnaround – From Speech to Answer</h2>
-        <p>0.35ms retrieval + sub-200ms STT + 70ms TTS enables full multilingual turns under 1.5s.</p>
+        <p>Including STT, bi-directional translation, sub-ms retrieval, and 300–500ms generation, the full multilingual turn stays under 1.5s.</p>
         <div class="two-col">
           <div class="card">
             <div class="flow-step">1) Customer Speech (Spanish)</div>
@@ -366,13 +366,26 @@
     prevBtn.addEventListener('click', () => setSlide(index - 1));
     nextBtn.addEventListener('click', () => setSlide(index + 1));
     window.addEventListener('keydown', (e) => {
-      if (['ArrowRight', 'PageDown', ' '].includes(e.key)) setSlide(index + 1);
-      if (['ArrowLeft', 'PageUp'].includes(e.key)) setSlide(index - 1);
-      if (e.key === 'Home') setSlide(0);
-      if (e.key === 'End') setSlide(slides.length - 1);
+      if (['ArrowRight', 'PageDown'].includes(e.key)) {
+        e.preventDefault();
+        setSlide(index + 1);
+      }
+      if (['ArrowLeft', 'PageUp'].includes(e.key)) {
+        e.preventDefault();
+        setSlide(index - 1);
+      }
+      if (e.key === 'Home') {
+        e.preventDefault();
+        setSlide(0);
+      }
+      if (e.key === 'End') {
+        e.preventDefault();
+        setSlide(slides.length - 1);
+      }
     });
     const match = location.hash.match(/slide-(\d+)/);
-    if (match) setSlide(Number(match[1]) - 1); else setSlide(0);
+    const initialIndex = match ? Number(match[1]) - 1 : 0;
+    setSlide(Number.isFinite(initialIndex) && initialIndex >= 0 && initialIndex < slides.length ? initialIndex : 0);
   </script>
 </body>
 </html>
