@@ -271,11 +271,11 @@
             <svg viewBox="0 0 700 260" width="100%" role="img" aria-label="Stacked latency timeline under 1.5 seconds">
               <text x="20" y="28" fill="#d4e8ff" font-size="18">Latency Stack (target total &lt;1500ms)</text>
               <rect x="20" y="70" width="120" height="55" fill="#52f2c8cc"/><text x="34" y="102" fill="#022a2a" font-size="14">STT 180ms</text>
-              <rect x="140" y="70" width="80" height="55" fill="#4dd6ffcc"/><text x="146" y="102" fill="#05243d" font-size="14">Translation 120</text>
-              <rect x="220" y="70" width="24" height="55" fill="#a0f7ff"/><text x="223" y="102" fill="#05243d" font-size="13">Retrieval 1</text>
+              <rect x="140" y="70" width="80" height="55" fill="#4dd6ffcc"/><text x="146" y="102" fill="#05243d" font-size="14">Translation 120ms</text>
+              <rect x="220" y="70" width="24" height="55" fill="#a0f7ff"/><text x="223" y="102" fill="#05243d" font-size="13">Retrieval 1ms</text>
               <rect x="244" y="70" width="300" height="55" fill="#7bb6ffcc"/><text x="312" y="102" fill="#032148" font-size="14">LLM 450ms</text>
-              <rect x="544" y="70" width="80" height="55" fill="#4dd6ffcc"/><text x="550" y="102" fill="#05243d" font-size="14">Translation 120</text>
-              <rect x="624" y="70" width="46" height="55" fill="#52f2c8cc"/><text x="628" y="102" fill="#022a2a" font-size="14">TTS 70</text>
+              <rect x="544" y="70" width="80" height="55" fill="#4dd6ffcc"/><text x="550" y="102" fill="#05243d" font-size="14">Translation 120ms</text>
+              <rect x="624" y="70" width="46" height="55" fill="#52f2c8cc"/><text x="628" y="102" fill="#022a2a" font-size="14">TTS 70ms</text>
               <text x="20" y="165" fill="#dbedff" font-size="16">Estimated total: ~941ms (well below 1.5s SLA)</text>
               <line x1="20" y1="195" x2="670" y2="195" stroke="#a2c8f4"/>
               <text x="20" y="216" fill="#b7d4f8" font-size="14">0ms</text><text x="590" y="216" fill="#b7d4f8" font-size="14">1500ms budget</text>
@@ -385,7 +385,7 @@
     });
     const match = location.hash.match(/slide-(\d+)/);
     const initialIndex = match ? Number(match[1]) - 1 : 0;
-    setSlide(Number.isFinite(initialIndex) && initialIndex >= 0 && initialIndex < slides.length ? initialIndex : 0);
+    setSlide(Number.isFinite(initialIndex) ? initialIndex : 0);
   </script>
 </body>
 </html>
