@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinguaOps AI Presentation</title>
+  <style>
+    :root {
+      --bg: #061224;
+      --panel: #0d1f3a;
+      --panel-2: #132949;
+      --text: #eaf2ff;
+      --muted: #9fb7de;
+      --accent: #4dd6ff;
+      --accent-2: #52f2c8;
+      --warn: #ff7e79;
+      --ok: #7dffa3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, #12315d 0%, var(--bg) 42%, #050a14 100%);
+      color: var(--text);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .deck {
+      height: 100vh;
+      position: relative;
+      padding: 1.2rem;
+    }
+    .slides {
+      height: calc(100vh - 88px);
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(170deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid rgba(160, 200, 255, 0.2);
+      backdrop-filter: blur(5px);
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 2.2rem 2.8rem;
+      overflow: auto;
+      opacity: 0;
+      transform: translateX(18px);
+      transition: opacity 320ms ease, transform 320ms ease;
+      pointer-events: none;
+    }
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+    h1, h2, h3 { margin: 0 0 0.65rem; line-height: 1.2; }
+    h1 { font-size: clamp(1.6rem, 2.6vw, 2.8rem); }
+    h2 { font-size: clamp(1.35rem, 2.1vw, 2.2rem); }
+    p, li { color: var(--muted); font-size: clamp(0.95rem, 1.25vw, 1.08rem); line-height: 1.55; }
+    .subtitle { font-size: clamp(1rem, 1.45vw, 1.2rem); color: #c7daf8; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.4rem; align-items: start; }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid rgba(135,180,255,0.2);
+      border-radius: 14px;
+      padding: 1rem;
+    }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin-top: 0.6rem; }
+    .metric { background: rgba(15,35,68,0.9); border: 1px solid rgba(77,214,255,0.3); border-radius: 10px; padding: 0.65rem; }
+    .metric strong { color: #fff; display: block; font-size: 1.12rem; }
+    .tag { color: var(--accent-2); font-weight: 700; }
+    .controls {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      padding: 0.5rem 0.2rem 0;
+    }
+    button {
+      background: linear-gradient(180deg, #1c3867, #163058);
+      color: var(--text);
+      border: 1px solid rgba(115,176,255,0.45);
+      border-radius: 999px;
+      padding: 0.55rem 1rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { filter: brightness(1.15); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .slide-num { color: #d2e6ff; font-weight: 600; min-width: 4.5rem; text-align: center; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { border: 1px solid rgba(143,185,252,0.35); padding: 0.48rem 0.5rem; vertical-align: top; }
+    th { background: rgba(77,214,255,0.15); color: #ecf7ff; text-align: left; }
+    .notes { margin-top: 0.7rem; font-size: 0.88rem; color: #b6caeb; }
+    .notes summary { cursor: pointer; color: #d5e7ff; }
+    .flow-step { background: rgba(12, 41, 76, 0.8); border: 1px solid rgba(82,242,200,0.35); border-radius: 10px; padding: 0.5rem 0.65rem; margin: 0.35rem 0; }
+    .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-top: 0.6rem; }
+    .phase { border-left: 4px solid var(--accent); padding: 0.7rem 0.7rem 0.7rem 0.8rem; background: rgba(19,41,73,0.86); border-radius: 8px; }
+    .phase strong { color: #fff; }
+    .cta {
+      margin-top: 0.9rem;
+      font-size: clamp(1.02rem, 1.35vw, 1.2rem);
+      color: #f0f7ff;
+      padding: 0.9rem;
+      border-radius: 12px;
+      background: linear-gradient(90deg, rgba(77,214,255,0.18), rgba(82,242,200,0.15));
+      border: 1px solid rgba(127,244,230,0.45);
+    }
+    .sr-only { position: absolute; left: -9999px; }
+    @media (max-width: 950px) {
+      .slide { padding: 1.2rem; }
+      .two-col, .metrics, .roadmap { grid-template-columns: 1fr; }
+      table { font-size: 0.84rem; }
+    }
+    @media print {
+      body { background: #fff; color: #111; overflow: visible; }
+      .deck { height: auto; padding: 0; }
+      .slides { height: auto; border: none; border-radius: 0; background: #fff; }
+      .slide { position: static; opacity: 1 !important; transform: none !important; page-break-after: always; color: #111; }
+      .controls { display: none; }
+      p, li, .subtitle { color: #333; }
+      .card, .metric, .phase, .flow-step, th, td { border-color: #c8d1e0; background: #f6f9ff; color: #111; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck" aria-label="LinguaOps AI slideshow">
+    <div class="slides" id="slides">
+      <section class="slide active">
+        <h1><span class="tag">LinguaOps AI</span>: Real-Time Multilingual Copilot for Global Customer Support</h1>
+        <p class="subtitle">A Dual-Agent RAG Architecture + Mistral Voxtral Ultra-Low-Latency Voice &amp; Translation Stack</p>
+        <svg viewBox="0 0 980 430" width="100%" role="img" aria-label="Bridge connecting global map and corporate headquarters">
+          <defs>
+            <linearGradient id="bridge" x1="0" x2="1">
+              <stop offset="0%" stop-color="#52f2c8"/><stop offset="100%" stop-color="#4dd6ff"/>
+            </linearGradient>
+          </defs>
+          <rect x="30" y="90" width="360" height="260" rx="20" fill="#10284a" stroke="#66c6ff55"/>
+          <circle cx="130" cy="180" r="52" fill="#1f467d"/><circle cx="250" cy="230" r="61" fill="#224f8a"/><circle cx="316" cy="158" r="34" fill="#2a5c9a"/>
+          <text x="62" y="328" fill="#b5d4fa" font-size="18">Global Multilingual Customers</text>
+          <rect x="590" y="70" width="320" height="290" rx="20" fill="#132949" stroke="#66c6ff55"/>
+          <rect x="650" y="140" width="200" height="170" fill="#1f426f"/>
+          <rect x="680" y="90" width="140" height="65" fill="#2a568d"/>
+          <text x="628" y="330" fill="#b5d4fa" font-size="18">Enterprise Knowledge Hub</text>
+          <path d="M390 280 Q490 130 590 260" fill="none" stroke="url(#bridge)" stroke-width="18" stroke-linecap="round"/>
+          <path d="M390 280 Q490 152 590 260" fill="none" stroke="#e4fdff66" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </section>
+
+      <section class="slide">
+        <h2>The Unsolved Problem: Traditional RAG is Too Slow for Real-Time Voice</h2>
+        <p>Standard pipelines add 200ms+ vector lookups. Delays beyond 600ms reduce lead conversion; delays above 800ms can drive an estimated 20–30% drop in support deflection (internal benchmark estimate).</p>
+        <div class="card">
+          <svg viewBox="0 0 850 350" width="100%" role="img" aria-label="Bar chart comparing standard RAG latency and target latency budget">
+            <line x1="80" y1="30" x2="80" y2="290" stroke="#92b8eb"/>
+            <line x1="80" y1="290" x2="800" y2="290" stroke="#92b8eb"/>
+            <text x="38" y="43" fill="#b8d4f8" font-size="14">1200</text>
+            <text x="38" y="108" fill="#b8d4f8" font-size="14">900</text>
+            <text x="38" y="173" fill="#b8d4f8" font-size="14">600</text>
+            <text x="38" y="238" fill="#b8d4f8" font-size="14">300</text>
+            <rect x="190" y="90" width="170" height="200" rx="10" fill="#ff7e79cc"/>
+            <rect x="490" y="205" width="170" height="85" rx="10" fill="#52f2c8cc"/>
+            <text x="196" y="80" fill="#ffe0de" font-size="18">Approximately 500–1100ms</text>
+            <text x="516" y="196" fill="#d7fff2" font-size="18">&lt;500ms</text>
+            <text x="180" y="320" fill="#d5eaff" font-size="19">Standard RAG latency</text>
+            <text x="518" y="320" fill="#d5eaff" font-size="19">Target budget</text>
+          </svg>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2>Solving RAG Latency: A Novel Dual-Agent Architecture</h2>
+        <div class="two-col">
+          <div class="card">
+            <svg viewBox="0 0 840 520" width="100%" role="img" aria-label="Dual agent RAG architecture diagram">
+              <rect x="8" y="36" width="824" height="476" rx="18" fill="#0d223f" stroke="#7fbfff66"/>
+              <text x="310" y="30" fill="#d9ebff" font-size="20">User Speech (Audio Stream)</text>
+              <rect x="54" y="78" width="732" height="404" rx="12" fill="#132949" stroke="#8ec8ff55"/>
+              <text x="285" y="105" fill="#d9ebff" font-size="20">Memory Router (Our Core)</text>
+              <rect x="95" y="130" width="280" height="172" rx="10" fill="#16345f" stroke="#52f2c866"/>
+              <rect x="454" y="130" width="280" height="172" rx="10" fill="#16345f" stroke="#4dd6ff66"/>
+              <text x="167" y="158" fill="#eafff8" font-size="18">Slow Thinker (Background)</text>
+              <text x="531" y="158" fill="#e8f5ff" font-size="18">Fast Talker (Foreground)</text>
+              <text x="115" y="184" fill="#b6d0f5" font-size="14">• Predicts next topics</text>
+              <text x="115" y="206" fill="#b6d0f5" font-size="14">• Searches FAISS/Qdrant</text>
+              <text x="115" y="228" fill="#b6d0f5" font-size="14">• Fills semantic cache</text>
+              <text x="474" y="184" fill="#b6d0f5" font-size="14">• Reads cache first</text>
+              <text x="474" y="206" fill="#b6d0f5" font-size="14">• Generates response</text>
+              <text x="474" y="228" fill="#b6d0f5" font-size="14">• &lt;200ms response budget</text>
+              <rect x="168" y="336" width="499" height="70" rx="10" fill="#0f2e53" stroke="#9bd6ff66"/>
+              <text x="246" y="364" fill="#d8f0ff" font-size="17">Semantic Cache (In-memory FAISS, sub-ms)</text>
+              <rect x="212" y="426" width="410" height="52" rx="10" fill="#0f2a49" stroke="#9bd6ff66"/>
+              <text x="298" y="458" fill="#d8f0ff" font-size="16">Vector Store (FAISS / Qdrant)</text>
+              <path d="M236 302 L236 336 M594 302 L594 336 M417 406 L417 426" stroke="#8de3ff" stroke-width="3"/>
+            </svg>
+          </div>
+          <div>
+            <div class="card">
+              <h3>How It Works</h3>
+              <ul>
+                <li>Slow Thinker runs as an asynchronous background task.</li>
+                <li>Predicts 3–5 likely follow-up topics with an LLM.</li>
+                <li>Retrieves docs and pre-fills semantic cache ahead of demand.</li>
+                <li>Fast Talker checks cache first (sub-ms), then vector DB on miss.</li>
+              </ul>
+            </div>
+            <div class="metrics">
+              <div class="metric"><strong>75%</strong>Cache hit rate<br>(86% for conversation turns 5–9)</div>
+              <div class="metric"><strong>316x</strong>110ms reduced to 0.35ms<br>retrieval speedup</div>
+              <div class="metric"><strong>16.5s</strong>Total retrieval latency<br>saved across 150 hits</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2>Extending with Mistral Voxtral: One Stack for STT, TTS, and Translation</h2>
+        <p>Dual-agent RAG solves text retrieval. Voxtral unifies multilingual speech-to-text, translation, and text-to-speech around the same core engine.</p>
+        <div class="card">
+          <svg viewBox="0 0 980 390" width="100%" role="img" aria-label="Diagram of Voxtral models wrapped around dual-agent RAG">
+            <rect x="310" y="95" width="360" height="195" rx="14" fill="#16345f" stroke="#81d3ff66"/>
+            <text x="385" y="140" fill="#e9f6ff" font-size="24">Dual-Agent RAG</text>
+            <text x="402" y="173" fill="#b6d0f5" font-size="17">Memory Router + Cache</text>
+            <ellipse cx="490" cy="193" rx="450" ry="150" fill="none" stroke="#52f2c8aa" stroke-width="3" stroke-dasharray="10 8"/>
+            <rect x="55" y="155" width="165" height="72" rx="10" fill="#19426f" stroke="#52f2c8aa"/>
+            <text x="75" y="198" fill="#eafff8" font-size="20">Voxtral STT</text>
+            <rect x="754" y="94" width="175" height="72" rx="10" fill="#19426f" stroke="#52f2c8aa"/>
+            <text x="777" y="138" fill="#eafff8" font-size="20">Voxtral TTS</text>
+            <rect x="748" y="228" width="188" height="72" rx="10" fill="#19426f" stroke="#52f2c8aa"/>
+            <text x="764" y="272" fill="#eafff8" font-size="19">Voxtral Translate</text>
+            <path d="M220 192 L310 192 M670 150 L754 130 M670 235 L748 264" stroke="#a3e9ff" stroke-width="3"/>
+          </svg>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2>Why Voxtral? Unmatched Speed &amp; Multilingual Capability</h2>
+        <p>Vertical integration of STT, translation, and TTS removes cascading handoff delays.</p>
+        <div class="card">
+          <table aria-label="Voxtral feature and benchmark table">
+            <thead><tr><th>Feature</th><th>Voxtral Model</th><th>Key Metric</th><th>Why It Matters</th></tr></thead>
+            <tbody>
+              <tr><td>Speech-to-Text</td><td>Voxtral Realtime</td><td><strong>Sub-200ms</strong> configurable latency</td><td>Real-time interaction without perceptible delay</td></tr>
+              <tr><td></td><td></td><td>At 480ms: <strong>1–2% WER</strong></td><td>Production-grade speed/accuracy balance</td></tr>
+              <tr><td></td><td></td><td><strong>13 languages</strong> incl. Hindi, Arabic, Russian</td><td>Broad global coverage</td></tr>
+              <tr><td>Text-to-Speech</td><td>Voxtral TTS (4B)</td><td><strong>70ms</strong> at concurrency 1; <strong>9.7x</strong> real-time</td><td>Near-instant responses</td></tr>
+              <tr><td></td><td></td><td><strong>9 languages</strong> + zero-shot voice cloning</td><td>Consistent brand voice cross-lingually</td></tr>
+              <tr><td>Translation</td><td>Voxtral (native)</td><td>Built-in language translation</td><td>No extra translation hop</td></tr>
+              <tr><td>Open Source</td><td>Apache 2.0 / CC BY-NC</td><td>Open weights for on-premise deployment</td><td>Privacy and no vendor lock-in</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2>Achieving &lt;1.5 Second Turnaround – From Speech to Answer</h2>
+        <p>Including STT, bi-directional translation, sub-ms retrieval, and 300–500ms generation, the full multilingual turn stays under 1.5s.</p>
+        <div class="two-col">
+          <div class="card">
+            <div class="flow-step">1) Customer Speech (Spanish)</div>
+            <div class="flow-step">2) Voxtral Realtime STT → Spanish text</div>
+            <div class="flow-step">3) Voxtral Translation → English text</div>
+            <div class="flow-step">4) Dual-Agent RAG → retrieval &lt;1ms + LLM ~300–500ms</div>
+            <div class="flow-step">5) Response (English text)</div>
+            <div class="flow-step">6) Voxtral Translation → Spanish text</div>
+            <div class="flow-step">7) Voxtral TTS → Spanish speech to customer</div>
+          </div>
+          <div class="card">
+            <svg viewBox="0 0 700 260" width="100%" role="img" aria-label="Stacked latency timeline under 1.5 seconds">
+              <text x="20" y="28" fill="#d4e8ff" font-size="18">Latency Stack (target total &lt;1500ms)</text>
+              <rect x="20" y="70" width="120" height="55" fill="#52f2c8cc"/><text x="34" y="102" fill="#022a2a" font-size="14">STT 180ms</text>
+              <rect x="140" y="70" width="80" height="55" fill="#4dd6ffcc"/><text x="146" y="102" fill="#05243d" font-size="14">Translation 120ms</text>
+              <rect x="220" y="70" width="24" height="55" fill="#a0f7ff"/><text x="223" y="102" fill="#05243d" font-size="13">Retrieval 1ms</text>
+              <rect x="244" y="70" width="300" height="55" fill="#7bb6ffcc"/><text x="312" y="102" fill="#032148" font-size="14">LLM 450ms</text>
+              <rect x="544" y="70" width="80" height="55" fill="#4dd6ffcc"/><text x="550" y="102" fill="#05243d" font-size="14">Translation 120ms</text>
+              <rect x="624" y="70" width="46" height="55" fill="#52f2c8cc"/><text x="628" y="102" fill="#022a2a" font-size="14">TTS 70ms</text>
+              <text x="20" y="165" fill="#dbedff" font-size="16">Estimated total: ~941ms (well below 1.5s SLA)</text>
+              <line x1="20" y1="195" x2="670" y2="195" stroke="#a2c8f4"/>
+              <text x="20" y="216" fill="#b7d4f8" font-size="14">0ms</text><text x="590" y="216" fill="#b7d4f8" font-size="14">1500ms budget</text>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2>How We Stack Up: Features &amp; Architecture Compared</h2>
+        <p>LinguaOps uniquely combines native multilingual voice, enterprise retrieval, and ultra-low latency in one architecture.</p>
+        <div class="card">
+          <table aria-label="Comparison matrix of LinguaOps versus market alternatives">
+            <thead><tr><th>Feature</th><th>LinguaOps AI (Ours)</th><th>Translation Bots</th><th>Generic Voice Agents</th><th>Enterprise Chatbots</th></tr></thead>
+            <tbody>
+              <tr><td>Core Architecture</td><td><strong>Dual-agent RAG + Voxtral</strong></td><td>Cascaded translation</td><td>Basic LLM + TTS</td><td>RAG on text</td></tr>
+              <tr><td>End-to-End Latency</td><td><strong>&lt;1.5 seconds</strong></td><td>&gt;3–5 seconds</td><td>1.5–3 seconds</td><td>N/A (text/async)</td></tr>
+              <tr><td>Multilingual Support</td><td><strong>Native Voxtral (13+)</strong></td><td>Translation layer only</td><td>External STT/TTS providers</td><td>Often translation layer</td></tr>
+              <tr><td>Knowledge Retrieval</td><td><strong>Predictive sub-ms cache</strong></td><td>None</td><td>Simple prompting</td><td>Standard vector DB (200ms+)</td></tr>
+              <tr><td>Agent Copilot Suggestions</td><td><strong>Yes</strong></td><td>No</td><td>No</td><td>Limited</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2>From PoC to Production – Our Build Path</h2>
+        <p>Phased delivery using open and commercial tools across RAG, voice, and deployment orchestration.</p>
+        <div class="two-col">
+          <div class="card">
+            <h3>Technical Stack</h3>
+            <ul>
+              <li><strong>Core RAG &amp; Caching:</strong> Dual-agent memory router, FAISS/Qdrant, semantic cache</li>
+              <li><strong>Voice &amp; Translation:</strong> Mistral Voxtral (Realtime STT, TTS, translation)</li>
+              <li><strong>Orchestration:</strong> Python FastAPI + WebSockets for real-time streaming</li>
+              <li><strong>Deployment:</strong> Docker + Kubernetes microservices</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Roadmap Timeline</h3>
+            <div class="roadmap">
+              <div class="phase"><strong>Phase 1 (Current)</strong><br>Integrate Voxtral with dual-agent RAG (PoC)</div>
+              <div class="phase"><strong>Phase 2 (6 weeks)</strong><br>Add intent classification, compliance, copilot UI</div>
+              <div class="phase"><strong>Phase 3 (Production)</strong><br>On-prem rollout + fine-tuning on proprietary support data</div>
+            </div>
+            <svg viewBox="0 0 700 120" width="100%" aria-hidden="true">
+              <line x1="60" y1="70" x2="640" y2="70" stroke="#a0ccff" stroke-width="4"/>
+              <circle cx="80" cy="70" r="12" fill="#52f2c8"/><circle cx="350" cy="70" r="12" fill="#4dd6ff"/><circle cx="620" cy="70" r="12" fill="#7bb6ff"/>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <h2>From Real-Time Translation to Real-Time Operational Intelligence</h2>
+        <p>LinguaOps AI democratizes expertise, removes global communication barriers, and upgrades customer support from scripted response to intelligent operations.</p>
+        <div class="metrics">
+          <div class="metric"><strong>&lt;1.5s</strong>End-to-end multilingual turn time</div>
+          <div class="metric"><strong>316x</strong>Retrieval acceleration with semantic cache</div>
+          <div class="metric"><strong>13+</strong>Languages with native voice pipeline</div>
+        </div>
+        <p class="cta">Call to Action: Launch the Phase 1 pilot now, validate KPI lift across multilingual queues, and move to enterprise production in one phased roadmap.</p>
+        <details class="notes"><summary>Speaker Notes (optional)</summary>Emphasize business impact: conversion, support deflection, and global customer satisfaction gains with one integrated stack.</details>
+      </section>
+    </div>
+
+    <div class="controls">
+      <button id="prevBtn" aria-label="Previous slide">← Previous</button>
+      <div class="slide-num" id="slideNum" aria-live="polite">1 / 9</div>
+      <button id="nextBtn" aria-label="Next slide">Next →</button>
+    </div>
+  </div>
+
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideNum = document.getElementById('slideNum');
+    let index = 0;
+    const setSlide = (nextIndex) => {
+      index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+      slideNum.textContent = `${index + 1} / ${slides.length}`;
+      prevBtn.disabled = index === 0;
+      nextBtn.disabled = index === slides.length - 1;
+      history.replaceState(null, '', `#slide-${index + 1}`);
+    };
+    prevBtn.addEventListener('click', () => setSlide(index - 1));
+    nextBtn.addEventListener('click', () => setSlide(index + 1));
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'PageDown'].includes(e.key)) {
+        e.preventDefault();
+        setSlide(index + 1);
+      }
+      if (['ArrowLeft', 'PageUp'].includes(e.key)) {
+        e.preventDefault();
+        setSlide(index - 1);
+      }
+      if (e.key === 'Home') {
+        e.preventDefault();
+        setSlide(0);
+      }
+      if (e.key === 'End') {
+        e.preventDefault();
+        setSlide(slides.length - 1);
+      }
+    });
+    const match = location.hash.match(/slide-(\d+)/);
+    const initialIndex = match ? Number(match[1]) - 1 : 0;
+    setSlide(Number.isFinite(initialIndex) ? initialIndex : 0);
+  </script>
+</body>
+</html>
