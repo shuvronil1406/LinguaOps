@@ -162,7 +162,7 @@
             <text x="38" y="238" fill="#b8d4f8" font-size="14">300</text>
             <rect x="190" y="90" width="170" height="200" rx="10" fill="#ff7e79cc"/>
             <rect x="490" y="205" width="170" height="85" rx="10" fill="#52f2c8cc"/>
-            <text x="196" y="80" fill="#ffe0de" font-size="18">~500–1100ms</text>
+            <text x="196" y="80" fill="#ffe0de" font-size="18">Approximately 500–1100ms</text>
             <text x="516" y="196" fill="#d7fff2" font-size="18">&lt;500ms</text>
             <text x="180" y="320" fill="#d5eaff" font-size="19">Standard RAG latency</text>
             <text x="518" y="320" fill="#d5eaff" font-size="19">Target budget</text>
@@ -207,8 +207,8 @@
               </ul>
             </div>
             <div class="metrics">
-              <div class="metric"><strong>75%</strong>Cache hit rate<br>(86% warm turns 5–9)</div>
-              <div class="metric"><strong>316x</strong>110ms → 0.35ms<br>retrieval speedup</div>
+              <div class="metric"><strong>75%</strong>Cache hit rate<br>(86% for conversation turns 5–9)</div>
+              <div class="metric"><strong>316x</strong>110ms reduced to 0.35ms<br>retrieval speedup</div>
               <div class="metric"><strong>16.5s</strong>Total retrieval latency<br>saved across 150 hits</div>
             </div>
           </div>
@@ -271,12 +271,12 @@
             <svg viewBox="0 0 700 260" width="100%" role="img" aria-label="Stacked latency timeline under 1.5 seconds">
               <text x="20" y="28" fill="#d4e8ff" font-size="18">Latency Stack (target total &lt;1500ms)</text>
               <rect x="20" y="70" width="120" height="55" fill="#52f2c8cc"/><text x="34" y="102" fill="#022a2a" font-size="14">STT 180ms</text>
-              <rect x="140" y="70" width="80" height="55" fill="#4dd6ffcc"/><text x="148" y="102" fill="#05243d" font-size="14">Tr 120</text>
-              <rect x="220" y="70" width="24" height="55" fill="#a0f7ff"/><text x="223" y="102" fill="#05243d" font-size="13">R</text>
+              <rect x="140" y="70" width="80" height="55" fill="#4dd6ffcc"/><text x="146" y="102" fill="#05243d" font-size="14">Translation 120</text>
+              <rect x="220" y="70" width="24" height="55" fill="#a0f7ff"/><text x="223" y="102" fill="#05243d" font-size="13">Retrieval 1</text>
               <rect x="244" y="70" width="300" height="55" fill="#7bb6ffcc"/><text x="312" y="102" fill="#032148" font-size="14">LLM 450ms</text>
-              <rect x="544" y="70" width="80" height="55" fill="#4dd6ffcc"/><text x="552" y="102" fill="#05243d" font-size="14">Tr 120</text>
-              <rect x="624" y="70" width="46" height="55" fill="#52f2c8cc"/><text x="629" y="102" fill="#022a2a" font-size="14">TTS</text>
-              <text x="20" y="165" fill="#dbedff" font-size="16">Estimated total: ~940ms (well below 1.5s SLA)</text>
+              <rect x="544" y="70" width="80" height="55" fill="#4dd6ffcc"/><text x="550" y="102" fill="#05243d" font-size="14">Translation 120</text>
+              <rect x="624" y="70" width="46" height="55" fill="#52f2c8cc"/><text x="628" y="102" fill="#022a2a" font-size="14">TTS 70</text>
+              <text x="20" y="165" fill="#dbedff" font-size="16">Estimated total: ~941ms (well below 1.5s SLA)</text>
               <line x1="20" y1="195" x2="670" y2="195" stroke="#a2c8f4"/>
               <text x="20" y="216" fill="#b7d4f8" font-size="14">0ms</text><text x="590" y="216" fill="#b7d4f8" font-size="14">1500ms budget</text>
             </svg>
